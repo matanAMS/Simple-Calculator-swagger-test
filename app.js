@@ -3,6 +3,10 @@ const bodyparser = require('body-parser');
 const app = express();
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require("swagger-jsdoc");
+const exp = require('constants');
+const { request } = require('https');
+const { Http2ServerRequest } = require('http2');
+const Add = require('./Add')
 
 const PORT = process.env.PORT || 4000;
 
@@ -26,9 +30,9 @@ const options = {
 const specs = swaggerJsDoc(options);
 
 //parses incoming request bodies in a middleware before your handlers, available under the req.body property.
+app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended: true}));
 app.use( "/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
-
 
 // Routes
 /**
@@ -48,26 +52,27 @@ app.get("/calculator",(req, res) => {
  * /calculate:
  *  post:
  *    description: Add Oparetion of 2 numbers
- *    parameters: 
- *     - name: num1
- *       type: number
- *     - name: num2 
- *       type: number
+ *    parameters:
+ *       - name: number 1#
+ *         type: integer      
  *    responses:
  *      '200':
  *        description: A successful response
  */
+
+// exports.Add = Add
+
 app.post('/calculate',(req, res) => {
-    const n1=parseInt(req.body.num1)
-    console.log(parseInt(n1))
-    // console.log(n1);
-    const n2=parseInt(req.body.num2)
-    console.log(n2)
+    const n1 = Number(req.body.num1)
+    console.log(Number(req.body.num1))
+    const n2=Number(req.body.num2)
+    // console.log(n2)
+    Add(n1,n2)
+    // const multiply=n1 * n2;
+    // const minus = n1-n2;
+    // const divide = n1 / n2;
+    // // if( req.body.add)
     const add=n1 + n2;
-    const multiply=n1 * n2;
-    const minus = n1-n2;
-    const divide = n1 / n2;
-    // if( req.body.add)
     res.send('the value of '+n1 +"+"+n2+' is: '+add);
     //  if(req.body.multiply)
     // res.send('the value of '+n1 +"*"+n2+' is: '+multiply);
@@ -79,3 +84,7 @@ app.post('/calculate',(req, res) => {
 
 
 app.listen(PORT, () => console.log(`The server is running on port ${PORT}`));
+
+
+
+
