@@ -60,12 +60,12 @@ app.get("/calculator", (req, res) => {
  *        description: A successful response
  */
 
-// exports.Add = Add
 
 app.post('/calculate', (req, res) => {
     const n1 = Number(req.body.num1)
     console.log(Number(req.body.num1))
     const n2 = Number(req.body.num2)
+    console.log(Number(req.body.num2))
 
     if (req.body.add) {
         const add = Add(n1, n2)
