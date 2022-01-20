@@ -7,6 +7,14 @@ const exp = require('constants');
 const { request } = require('https');
 const { Http2ServerRequest } = require('http2');
 const { Add, Multiply, Minus, Divide } = require('./functions/myFunction.js')
+const logger = require('./____winstonLogger____');
+var morgan = require('morgan');
+const {winston, stream } = require('winston');
+// const winston = require('winston/lib/winston/config');
+
+// logger.warn('text warn',{meta: 1})
+// logger.error('text error')
+// logger.error(new Error ('something went wrong'))
 
 const PORT = process.env.PORT || 4000;
 
@@ -33,6 +41,7 @@ const specs = swaggerJsDoc(options);
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
+app.use(morgan('combined', { "stream": stream.write}));
 
 // Routes
 /**
@@ -47,6 +56,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
 app.get("/calculator", (req, res) => {
     res.status(200).sendFile(__dirname + "/index.html");
 })
+
 /**
  * @swagger
  * /calculate:
@@ -66,7 +76,6 @@ app.post('/calculate', (req, res) => {
     console.log(Number(req.body.num1))
     const n2 = Number(req.body.num2)
     console.log(Number(req.body.num2))
-
     if (req.body.add) {
         const add = Add(n1, n2)
         res.send('the value of ' + n1 + "+" + n2 + ' is: ' + add);
@@ -74,6 +83,7 @@ app.post('/calculate', (req, res) => {
     if (req.body.multiply) {
         const multiply = Multiply(n1, n2);
         res.send('the value of ' + n1 + "*" + n2 + ' is: ' + multiply);
+        logger.info({theitem: item})
     }
     if (req.body.minus) {
         const minus = Minus(n1, n2);
@@ -84,7 +94,6 @@ app.post('/calculate', (req, res) => {
         res.send('the value of ' + n1 + "/" + n2 + ' is: ' + divide);
     }
 })
-
 
 app.listen(PORT, () => console.log(`The server is running on port ${PORT}`));
 
